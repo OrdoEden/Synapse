@@ -80,8 +80,8 @@ public struct SynapseCredentialStore {
     private let defaults: UserDefaults
     private let namespace: String
 
-    /// Keep the legacy default namespace so renaming the package preserves existing credentials.
-    public init(defaults: UserDefaults = .standard, namespace: String = "cortex.secret") {
+    /// Credentials use the library namespace unless the host supplies an explicit namespace.
+    public init(defaults: UserDefaults = .standard, namespace: String = "Synapse.secret") {
         self.defaults = defaults
         self.namespace = namespace
     }

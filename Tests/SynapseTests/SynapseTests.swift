@@ -34,15 +34,15 @@ final class SynapseTests: XCTestCase {
         let suite = "SynapseTests.\(UUID().uuidString)"
         let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
         defer { defaults.removePersistentDomain(forName: suite) }
-        defaults.set("fixture-old", forKey: "jarvis.secret.judge")
-        let store = SynapseCredentialStore(defaults: defaults, namespace: "jarvis.secret")
+        defaults.set("fixture-old", forKey: "Synapse.secret.judge")
+        let store = SynapseCredentialStore(defaults: defaults)
         let route = makeRoute(apiKey: store.key(for: "judge"))
         XCTAssertTrue(route.isConfigured)
         XCTAssertEqual(store.key(for: "reply"), "")
         store.setKey("fixture-new", for: "judge")
         XCTAssertEqual(route.apiKey, "fixture-old")
         store.setKey(" \n ", for: "judge")
-        XCTAssertNil(defaults.object(forKey: "jarvis.secret.judge"))
+        XCTAssertNil(defaults.object(forKey: "Synapse.secret.judge"))
     }
 
     func testOriginComparisonDoesNotConfuseHostSuffixOrDefaultPort() {
