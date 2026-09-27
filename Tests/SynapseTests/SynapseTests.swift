@@ -88,6 +88,22 @@ final class SynapseTests: XCTestCase {
         XCTAssertEqual(rejected.detail, "密钥无效或无权限")
     }
 
+    func testMultimodalUserMessageEncodesTextThenInlineImages() throws {
+        let message = SynapseChatMessage.user(text: "描述表情包", images: [SynapseImageInput(data: Data([1, 2, 3]))])
+        let json = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(message)) as? [String: Any])
+        XCTAssertEqual(json["role"] as? String, "user")
+        let parts = try XCTUnwrap(json["content"] as? [[String: Any]])
+        XCTAssertEqual(parts.count, 2)
+        XCTAssertEqual(parts[0]["type"] as? String, "text")
+        XCTAssertEqual(parts[0]["text"] as? String, "描述表情包")
+        XCTAssertEqual(parts[1]["type"] as? String, "image_url")
+        let image = try XCTUnwrap(parts[1]["image_url"] as? [String: Any])
+        XCTAssertEqual(image["url"] as? String, "data:image/jpeg;base64,AQID")
+        XCTAssertEqual(image["detail"] as? String, "low")
+        let system = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(SynapseChatMessage.system("规则"))) as? [String: Any])
+        XCTAssertEqual(system["content"] as? String, "规则")
+    }
+
     private func makeRoute(endpoint: String = "https://example.test/decisions", apiKey: String = "fixture-key") -> SynapseModelRoute {
         SynapseModelRoute(provider: .custom, apiProtocol: .jevDecisions, endpoint: endpoint, model: "fixture-model", apiKey: apiKey)
     }

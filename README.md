@@ -30,6 +30,7 @@ let response = try await SynapseGateway.shared.decide(
 
 - `decide(state:questions:using:)` 编码 `model/state/questions`，保留响应中的 `choice/confidence/noul/score/probabilities/legend`。题目内容、情绪解释和排序规则由 App 构造。
 - `complete(messages:temperature:using:)` 编码非流式 Chat Completions；消息 content 支持 JSON 文本或多模态数组，响应目前读取字符串正文。不包含流式、工具调用或任意厂商参数；需要这些能力时显式扩展契约。
+- `SynapseChatMessage.user(text:images:)` 生成 OpenAI 兼容的多模态内容（文字 + `image_url` base64 data URL，默认 `detail: low`），`.system(_:)` 生成系统消息；图片内联在请求体中，调用方负责控制尺寸，Synapse 不缓存图片。
 - OpenRouter 自动追加 `/alpha/decisions`，TypeSafe 追加 `/v1/systemone`；custom 判断路线接受完整 POST 地址。聊天路线在 base URL 后追加 `/chat/completions`。
 - `SynapseModelRoute` 是 `Sendable` 不可变快照；凭据只在模块内部可读，不提供 Codable 导出。业务在启动时冻结生成/排序的各路线，再复用同一快照。不要打印或反射快照。
 
